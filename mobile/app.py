@@ -11,14 +11,15 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload():
     file = request.files['file']
+    print file
     if file:
         filename = secure_filename(file.filename)
         file.save(os.path.join(os.getcwd(), filename))
-        return redirect(url_for('uploaded'))
+        return redirect(url_for('uploaded', filename=filename))
 
 @app.route('/uploads/<filename>')
 def uploaded(filename):
     return send_from_directory(os.getcwd(), filename)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

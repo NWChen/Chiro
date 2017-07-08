@@ -6,6 +6,10 @@
         <video id="player" controls autoplay></video>
         <canvas id="snapshot"></canvas>
         <button id="capture">Capture</button>
+        <form enctype="multipart/form-data" action="/upload" method="post" id="image-form">
+            <input id="image-file" type="file" />
+        </form> 
+        <!--<a id="download" download="image.png"><button ty[e="button" onClick="download()">Download</button></a>-->
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </body>
 </html>
