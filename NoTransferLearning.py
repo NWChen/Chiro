@@ -1,8 +1,3 @@
-
-# coding: utf-8
-
-# In[16]:
-
 import keras
 import os
 import numpy as np
@@ -11,17 +6,11 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 
-
-# In[19]:
-
 numClasses = 2
 imgChannels = 3
 imgCols, imgRows = 128, 128
 batchSize = 64
 numEpochs = 15
-
-
-# In[13]:
 
 def processDataset():
     positiveTrainFolder = 'data/good/'
@@ -68,22 +57,9 @@ def processDataset():
             print('Something went wrong')
     return X,Y
 
-
-# In[14]:
-
 X,Y = processDataset()
 from sklearn.model_selection import train_test_split
-xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size=0.20)
-
-
-# In[15]:
-
-from matplotlib import pyplot
-pyplot.imshow(X[199])
-pyplot.show()
-
-
-# In[20]:
+xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size=0.33)
 
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3),
@@ -103,17 +79,12 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
-model.fit(xTrain, yTrain,
-          batch_size=batchSize,
-          epochs=numEpochs,
-          verbose=1,
-          validation_data=(xTest, yTest))
+datagen = ImageDataGenerator(horizontal_flip=True, zca_whitening=True, width_shift_range=0.2,
+        height_shift_range=0.2, zoom_range=0.2) 
+datagen.fit(xTrain)
+
+model.fit_generator(datagen.flow(xTrain, yTrain), samples_per_epoch=len(xTrain), epochs=numEpochs, validation_data=(xTest, yTest))
 score = model.evaluate(xTest, yTest, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-
-
-# In[ ]:
-
-
 
