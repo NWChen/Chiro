@@ -65,8 +65,6 @@ def testImageDataGenerator():
 X,Y = processDataset()
 xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size=0.20)
 
-testImageDataGenerator()
-
 # create the base pre-trained model
 base_model = InceptionV3(weights='imagenet', include_top=False)
 
@@ -104,14 +102,14 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 # Keras has a cool object that creates augmented data for you just in time
 # during the training process, and thus you don't have to save it in memory.
 
-datagen = ImageDataGenerator(horizontal_flip=True, zca_whitening=True, width_shift_range=0.2,
-    	height_shift_range=0.2, zoom_range=0.2, ) 
-datagen.fit(xTrain)
+#datagen = ImageDataGenerator(horizontal_flip=True, zca_whitening=True, width_shift_range=0.2,
+    	#height_shift_range=0.2, zoom_range=0.2, ) 
+#datagen.fit(xTrain)
 
 # we train our model again (this time fine-tuning the top 2 inception blocks
 # alongside the top Dense layers
-model.fit_generator(datagen, samples_per_epoch=len(xTrain), epochs=numFinalEpochs, validation_data=(xTest, yTest))
-#model.fit(xTrain, yTrain, batch_size=batchSize, nb_epoch=numFinalEpochs,validation_data=(xTest, yTest),shuffle=True)
+#model.fit_generator(datagen, samples_per_epoch=len(xTrain), epochs=numFinalEpochs, validation_data=(xTest, yTest))
+model.fit(xTrain, yTrain, batch_size=batchSize, nb_epoch=numFinalEpochs,validation_data=(xTest, yTest),shuffle=True)
 
 # Saving the model
 
