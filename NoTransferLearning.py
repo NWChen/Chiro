@@ -4,7 +4,9 @@ import numpy as np
 from keras.preprocessing import image
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Conv2D, MaxPooling2D
+from keras.models import load_model
 
 numClasses = 2
 imgChannels = 3
@@ -87,4 +89,6 @@ model.fit_generator(datagen.flow(xTrain, yTrain), samples_per_epoch=len(xTrain),
 score = model.evaluate(xTest, yTest, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
+
+model.save('model.h5')
 
