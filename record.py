@@ -8,12 +8,11 @@ def record(camera, overlay_text):
     # Continually display raw output of webcam
     ret, raw_frame = camera.read() # We could convert color spaces to HSV here
     frame = raw_frame 
-    cv2.putText(frame, overlay_text, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+    #cv2.putText(frame, overlay_text, (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     cv2.imshow('frame', raw_frame)
     return raw_frame
 
 '''
-# TODO: Remove this method
 # Takes in a label for a file.
 # Returns a new file with format <label><index>.
 def name_this_file(label, dir):
@@ -21,25 +20,36 @@ def name_this_file(label, dir):
     for file in os.listdir(dir):
         # Get next lowest index for this label
         if label in file:
-            index = int(file[len('good'):file.find('.')])
+            index = int(file[len(label):file.find('.')])
             if index > max_index:
                 max_index = index
     return label + str(max_index + 1)
 '''
+
+def name_this_dir(cwd):
+    max_index = 0
+    for dir in os.listdir(cwd):
+        index = int(dir)
+        if index > max_index:
+            max_index = index
+    return str(max_index)
 
 if __name__ == '__main__':
     label = ''
     while label not in ('good', 'bad'):
         label = raw_input('LABEL FOR THIS DATASET (good / bad): ')
 
-    dir = '%s/data/%s/' % (os.getcwd(), label) # Establish the path of the image.
+    temp_dir = '%s/data/%s' % (os.getcwd(), label)
+    dir = '%s/%s/' % (temp_dir, name_this_dir(temp_dir))
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    print dir
     index = 0 
 
     camera = cv2.VideoCapture(0)
 
     while True:
         frame = record(camera, label)
-        frame = cv2.flip(frame, 180)
         filename = dir + str(index) + '.jpg'
         height, width, channels = frame.shape # Ensure we actually took an image.
         if width and height:
