@@ -27,24 +27,50 @@ numFinalEpochs = 16
 
 # Goes through the pictures in the folder, and creates training dataset
 def processDataset():
-    trainFolder = 'Images/'
-    fileNames = os.listdir(trainFolder)
-    X = np.ones((len(fileNames),imgCols,imgRows,imgChannels))
-    Y = np.ones((len(fileNames), numClasses))
-    for index,filename in enumerate(fileNames):
+    positiveTrainFolder = 'data/good/'
+    negativeTrainFolder = 'data/bad/'
+    positiveSubFolders = os.listdir(positiveTrainFolder)
+    negativeSubFolders = os.listdir(negativeTrainFolder)
+    # Some weird file that gets added in with Unix to Mac transfer
+    if ('.DS_Store' in positiveSubFolders):
+        positiveSubFolders.remove('.DS_Store')
+    if ('.DS_Store' in negativeSubFolders):
+        negativeSubFolders.remove('.DS_Store')
+    
+    positiveFileNames=[]
+    negativeFileNames=[]
+    for folder in positiveSubFolders:
+        fileNames = os.listdir(positiveTrainFolder + folder)
+        positiveFileNames += [folder + '/' + f for f in fileNames]
+    for folder in negativeSubFolders:
+        fileNames += os.listdir(negativeTrainFolder + folder)
+        negativeFileNames += [folder + '/' + f for f in fileNames]
+
+    numTrainExamples = len(positiveFileNames) + len(negativeFileNames)
+    X = np.ones((numTrainExamples,imgCols,imgRows,imgChannels))
+    Y = np.ones((numTrainExamples, numClasses))
+
+    for index,filename in enumerate(positiveFileNames):
         if filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png"):
-            imgPath = str(trainFolder + filename) # TODO double check if this is right
+            imgPath = str(positiveTrainFolder + filename) # TODO double check if this is right
             img = image.load_img(imgPath, target_size=(299, 299))
             img = image.img_to_array(img)
             img = np.expand_dims(img, axis=0)
             img = preprocess_input(img)
             X[index] = img
-            # TODO remove this
-            condition = True
-            if (condition):
-                Y[index] = [1,0]
-            else:
-                Y[index] = [1,0]
+            Y[index] = [1,0]
+        else:
+            print('Something went wrong')
+
+    for index,filename in enumerate(negativeFileNames):
+        if filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png"):
+            imgPath = str(negativeTrainFolder + filename) # TODO double check if this is right
+            img = image.load_img(imgPath, target_size=(299, 299))
+            img = image.img_to_array(img)
+            img = np.expand_dims(img, axis=0)
+            img = preprocess_input(img)
+            X[index] = img
+            Y[index] = [0,1]
         else:
             print('Something went wrong')
     return X,Y
