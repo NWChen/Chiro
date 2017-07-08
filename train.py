@@ -22,8 +22,8 @@ imgCols, imgRows = 299, 299
 batchSize = 64
 layersToFreeze = 172
 batchSize = 32
-numInitialEpochs = 3
-numFinalEpochs = 16
+numInitialEpochs = 16
+numFinalEpochs = 3
 
 # Goes through the pictures in the folder, and creates training dataset
 def processDataset():
@@ -135,7 +135,8 @@ model.compile(optimizer=SGD(lr=0.0001, momentum=0.9), loss='categorical_crossent
 # we train our model again (this time fine-tuning the top 2 inception blocks
 # alongside the top Dense layers
 #model.fit_generator(datagen, samples_per_epoch=len(xTrain), epochs=numFinalEpochs, validation_data=(xTest, yTest))
-model.fit(xTrain, yTrain, batch_size=batchSize, nb_epoch=numFinalEpochs,validation_data=(xTest, yTest),shuffle=True)
+model.fit(xTrain, yTrain, batch_size=batchSize, nb_epoch=numFinalEpochs,shuffle=True)
+model.evaluate(xTest, yTest, batch_size=batchSize)
 
 # Saving the model
 
