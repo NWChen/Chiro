@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os
+import time
 
 # Takes in a camera object and any overlay information.
 # Returns the raw RGB image from the camera.
@@ -12,20 +13,6 @@ def record(camera, overlay_text):
     cv2.imshow('frame', raw_frame)
     return raw_frame
 
-'''
-# Takes in a label for a file.
-# Returns a new file with format <label><index>.
-def name_this_file(label, dir):
-    max_index = 0
-    for file in os.listdir(dir):
-        # Get next lowest index for this label
-        if label in file:
-            index = int(file[len(label):file.find('.')])
-            if index > max_index:
-                max_index = index
-    return label + str(max_index + 1)
-'''
-
 def name_this_dir(cwd):
     max_index = 0
     for dir in os.listdir(cwd):
@@ -35,10 +22,61 @@ def name_this_dir(cwd):
     return str(max_index)
 
 if __name__ == '__main__':
+    three = '''
+    .----------------. 
+    | .--------------. |
+    | |    ______    | |
+    | |   / ____ `.  | |
+    | |   `'  __) |  | |
+    | |   _  |__ '.  | |
+    | |  | \____) |  | |
+    | |   \______.'  | |
+    | |              | |
+    | '--------------' |
+    '----------------' 
+    '''
+    two = '''
+     .----------------. 
+    | .--------------. |
+    | |    _____     | |
+    | |   / ___ `.   | |
+    | |  |_/___) |   | |
+    | |   .'____.'   | |
+    | |  / /____     | |
+    | |  |_______|   | |
+    | |              | |
+    | '--------------' |
+    '----------------' 
+    '''
+    one = '''
+    .----------------. 
+    | .--------------. |
+    | |     __       | |
+    | |    /  |      | |
+    | |    `| |      | |
+    | |     | |      | |
+    | |    _| |_     | |
+    | |   |_____|    | |
+    | |              | |
+    | '--------------' |
+    '----------------' 
+    '''
+    goodjob = '''
+     _____  ____   ____  _____         _  ____  ____   
+    / ____|/ __ \ / __ \|  __ \       | |/ __ \|  _ \  
+   | |  __| |  | | |  | | |  | |      | | |  | | |_) | 
+   | | |_ | |  | | |  | | |  | |  _   | | |  | |  _ <  
+   | |__| | |__| | |__| | |__| | | |__| | |__| | |_) | 
+    \_____|\____/ \____/|_____/   \____/ \____/|____(_)
+    '''
+    sleeps = [three, two, one]
+
+    # Get user input for data type
     label = ''
     while label not in ('good', 'bad'):
         label = raw_input('LABEL FOR THIS DATASET (good / bad): ')
 
+    # Generate training set directory
     temp_dir = '%s/data/%s' % (os.getcwd(), label)
     dir = '%s/%s/' % (temp_dir, name_this_dir(temp_dir))
     if not os.path.exists(dir):
@@ -46,9 +84,18 @@ if __name__ == '__main__':
     print dir
     index = 0 
 
+    # Count down to shot
     camera = cv2.VideoCapture(0)
+    for i in sleeps:
+        print i
+        time.sleep(1)
 
-    while True:
+    start_time = time.time()
+    time.clock()
+   
+    elapsed = 0 
+    while elapsed < 10:
+        elapsed = time.time() - start_time
         frame = record(camera, label)
         filename = dir + str(index) + '.jpg'
         height, width, channels = frame.shape # Ensure we actually took an image.
