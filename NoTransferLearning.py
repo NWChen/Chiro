@@ -16,7 +16,7 @@ numEpochs = 15
 
 def processDataset():
     positiveTrainFolder = 'data/good/'
-    negativeTrainFolder = 'data/bad/'
+    negativeTrainFolder = 'data/bad/'   
     positiveSubFolders = os.listdir(positiveTrainFolder)
     negativeSubFolders = os.listdir(negativeTrainFolder)
     # Some weird file that gets added in with Unix to Mac transfer
@@ -28,11 +28,13 @@ def processDataset():
     positiveFileNames=[]
     negativeFileNames=[]
     for folder in positiveSubFolders:
-        fileNames = os.listdir(positiveTrainFolder + folder)
+        fileNames = os.listdir(str(positiveTrainFolder + folder))
         positiveFileNames += [folder + '/' + f for f in fileNames]
+        break
     for folder in negativeSubFolders:
         fileNames += os.listdir(negativeTrainFolder + folder)
         negativeFileNames += [folder + '/' + f for f in fileNames]
+        break
 
     numTrainExamples = len(positiveFileNames) + len(negativeFileNames)
     X = np.ones((numTrainExamples,imgCols,imgRows,imgChannels))
@@ -60,6 +62,8 @@ def processDataset():
     return X,Y
 
 X,Y = processDataset()
+print X.shape
+print Y.shape 
 from sklearn.model_selection import train_test_split
 xTrain, xTest, yTrain, yTest = train_test_split(X, Y, test_size=0.33)
 
